@@ -1,0 +1,10 @@
+---
+###########################################################
+# Install Ansible Core package
+###########################################################
+- name: Install ansible-core package 
+  ansible.builtin.dnf:
+    name: 
+      - ansible-core
+    state: present
+    validate_certs: '{{ trust_repository_certs }}'

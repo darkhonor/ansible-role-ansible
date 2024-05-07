@@ -1,0 +1,49 @@
+---
+# - name: "Prepare the {{ ansible_facts['distribution'] }} guest operating system."
+#   include_tasks: "{{ ansible_facts['distribution'] | lower }}.yml"
+#   when: "ansible_facts['distribution'] == 'Ubuntu'"
+# - name: "Prepare the {{ ansible_facts['distribution'] }} guest operating system."
+#   include_tasks: el.yml
+#   when: "ansible_facts['distribution'] in ['RedHat', 'CentOS', 'Rocky', 'AlmaLinux', 'OracleLinux']"
+- name: "Prepare the Oracle Linux guest operating system."
+  include_tasks: oracle.yml
+  when: "ansible_facts['distribution'] in ['OracleLinux']"
+# - name: "Prepare the {{ ansible_facts['os_family'] }} guest operating system."
+#   ansible.builtin.include_tasks: windows.yml
+#   when: ansible_facts['os_family'] == 'Windows'
+
+###########################################################
+# Add Ansible Collection Archive at Specified location if Airgap Env
+###########################################################
+- name: Configure Airgap System
+  block:
+    - name: Create Ansible Collection Location on Host
+      ansible.builtin.file:
+        path: '{{ collection_archive_path }}'
+        owner: '{{ collection_archive_owner }}'
+        group: '{{ collection_archive_group }}'
+        mode: '{{ collection_archive_mode }}'
+        setype: '{{ collection_archive_setype }}'
+        state: directory
+    - name: Download Ansible Collection Archive to Host
+      ansible.builtin.unarchive:
+        src: '{{ collection_archive_url }}'
+        dest: '{{ collection_archive_path }}'
+        owner: '{{ collection_archive_owner }}'
+        group: '{{ collection_archive_group }}'
+        setype: '{{ collection_archive_setype }}'
+        keep_newer: '{{ collection_archive_keep_newer }}'
+        remote_src: true
+        validate_certs: '{{ trust_repository_certs }}'
+    #######################################################
+    # Configure Ansible to use Collection Archive path
+    #######################################################
+    - name: Configure Ansible to use Collection Archive path
+      ansible.builtin.lineinfile:
+        path: /etc/ansible/ansible.cfg
+        regexp: '^(.*)collections_path='
+        line: "collections_path={{ ANSIBLE_HOME ~ \"/collections:/usr/share/ansible/collections:{{ collection_archive_path }}/ansible_collections\" }}"
+        backup: true
+        state: present
+  when:
+    - airgap
