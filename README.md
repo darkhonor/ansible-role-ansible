@@ -1,38 +1,55 @@
-Role Name
-=========
+# Ansible Role: Ansible
 
-A brief description of the role goes here.
+Installs the Ansible Core application and (if required) the modules and
+plugins required to operate the application in an airgap environment.
 
-Requirements
-------------
+## Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+None
 
-Role Variables
---------------
+## Role Variables
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+You can modify any of the following variables as you wish in the role's `defaults/main.yml`:
 
-Dependencies
-------------
+* `airgap`: Boolean if the target is in an airgap'd environment (Default: `false`)
+* `trust_repository_certs`: Boolean if the source repository's certificate is trusted by the target (Default: `true`)
+* `collection_archive_url`: Full URL to an archive of the Ansible Collections (airgap only)
+* `collection_archive_path`: Path on the target to create and store the Ansible Collections (airgap only; Default: `/opt/ansible`)
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+The following role variables are *safe* defaults and should not need to be modified:
 
-Example Playbook
-----------------
+* `collection_archive_owner`: File owner for the collection archive (airgap only; Default: `root`)
+* `collection_archive_group`: Group owner for the collection files (airgap only; Default: `root`)
+* `collection_archive_mode`: Directory Mode for the collection files (airgap only; Default: `0755`)
+* `collection_archive_setype`: SELinux Type for collection files (airgap only; Default: `usr_t`)
+* `collection_archive_keep_newer`: Boolean if you want to preserve files locally that are newer than the files in the archive (airgap only; Default: `false`)
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+## Dependencies
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+None
 
-License
--------
+## Example Playbook
 
-BSD
+Here is an example playbook using this role:
 
-Author Information
-------------------
+```yaml
+- name: Configure workstations
+  become: true
+  become_method: sudo
+  gather_facts: true
+  hosts: all
+  roles:
+    - role: ansible
+      airgap: true
+      trust_repository_certs: false
+      collection_archive_url: "{{ repo_server }}/{{ ansible_collection_archive }}"
+      collection_archive_path: /opt/ansible
+```
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+## License
+
+MIT
+
+## Author Information
+
+Alex Ackerman, GitHub @darkhonor
