@@ -6,5 +6,6 @@
   ansible.builtin.dnf:
     name: 
       - ansible-core
+      - python3-pip
     state: present
     validate_certs: '{{ trust_repository_certs }}'

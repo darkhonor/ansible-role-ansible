@@ -3,7 +3,9 @@
 airgap: false
 trust_repository_certs: true
 collection_archive_url: https://localrepo.domain.local/ansible-collection.tar.gz
+python_lib_archive_url: https://localrepo.domain.local/python-libs.tar.gz
 collection_archive_path: /opt/ansible
+python_archive_path: /tmp/python
 collection_archive_owner: root
 collection_archive_group: root
 collection_archive_mode: '0755'
