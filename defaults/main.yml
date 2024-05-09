@@ -5,17 +5,11 @@ trust_repository_certs: true
 collection_archive_url: https://localrepo.domain.local/ansible-collection.tar.gz
 python_lib_archive_url: https://localrepo.domain.local/python-libs.tar.gz
 collection_archive_path: /opt/ansible
-python_archive_path: /tmp/python
+python_archive_path: /opt/python-libs
 collection_archive_owner: root
 collection_archive_group: root
 collection_archive_mode: '0755'
 collection_archive_setype: usr_t
 collection_archive_keep_newer: false
-ansible_collection_list: [
-  "ansible-netcommon-6.1.1.tar.gz",
-  "ansible-posix-1.5.4.tar.gz",
-  "ansible-security-2.0.0.tar.gz",
-  "ansible-utils-4.1.0.tar.gz",
-  "ansible-windows-2.3.0.tar.gz",
-  "community-general-8.6.0.tar.gz"
-]
+ansible_collection_list: []
+python_library_list: []

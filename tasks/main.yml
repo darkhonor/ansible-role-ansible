@@ -53,17 +53,14 @@
         keep_newer: '{{ collection_archive_keep_newer }}'
         remote_src: true
         validate_certs: '{{ trust_repository_certs }}'
-    - name: Install Python Libraries
-      ansible.builtin.command:
-        argv:
-          - pip3
-          - install
-          - --no-index 
-          - "--find-links=file:///{{ python_archive_path }}"
-
     #######################################################
     # Configure Ansible to use Collection Archive path
     #######################################################
+    - name: Install Python Libraries
+      ansible.builtin.shell: |
+        umask 0022
+        pip3 install --no-deps {{ python_archive_path }}/{{ item }}
+      loop: '{{ python_library_list }}'
     - name: Configure Ansible to use Collection Archive path
       ansible.builtin.lineinfile:
         path: /etc/ansible/ansible.cfg
