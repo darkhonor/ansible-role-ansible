@@ -68,8 +68,14 @@
       ansible.builtin.lineinfile:
         path: /etc/ansible/ansible.cfg
         regexp: '^(.*)collections_path='
-        line: "collections_path={{ ANSIBLE_HOME ~ \"/collections:/usr/share/ansible/collections:{{ collection_archive_path }}/ansible_collections\" }}"
+        line: "collections_path=/usr/share/ansible/collections"
         backup: true
         state: present
+    - name: Install Currated list of Ansible Collections
+      ansible.builtin.shell: |
+        umask 0022
+        ansible-galaxy collection install --upgrade --offline --no-deps /opt/ansible/{{ item }}
+      loop: '{{ ansible_collection_list }}'
+
   when:
     - airgap
